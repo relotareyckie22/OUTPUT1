@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shopping Cart</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+
+    header {
+      background: #c2185b;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+    }
+
+    .cart {
+      text-align: center;
+      padding: 20px;
+    }
+
+    button {
+      background: #ff4081;
+      color: white;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Your Cart</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+
+  <section class="cart">
+    <h2>Cart Items</h2>
+    <ul id="cart-items"></ul>
+    <p>Total: $<span id="total-price">0</span></p>
+    <button id="clear-cart">Clear Cart</button>
+  </section>
+
+  <!-- Optional: Inline script if not using script.js -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      function updateCartCount() {
+        const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById("cart-count").textContent = cartCount;
+      }
+
+      function displayCart() {
+        const cartItemsContainer = document.getElementById("cart-items");
+        const totalPriceElement = document.getElementById("total-price");
+        cartItemsContainer.innerHTML = "";
+        let total = 0;
+
+        if (cart.length === 0) {
+          cartItemsContainer.innerHTML = "<li>Your cart is empty.</li>";
+        } else {
+          cart.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = `${item.name} x ${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`;
+            cartItemsContainer.appendChild(li);
+            total += item.price * item.quantity;
+          });
+        }
+
+        totalPriceElement.textContent = total.toFixed(2);
+      }
+
+      const clearCartBtn = document.getElementById("clear-cart");
+      if (clearCartBtn) {
+        clearCartBtn.addEventListener("click", () => {
+          cart = [];
+          localStorage.removeItem("cart");
+          displayCart();
+          updateCartCount();
+        });
+      }
+
+      // Initial render
+      displayCart();
+      updateCartCount();
+    });
+  </script>
+
+  <!-- OR include external script (not both) -->
+  <!-- <script src="assets/js/script.js"></script> -->
+</body>
+</html>
